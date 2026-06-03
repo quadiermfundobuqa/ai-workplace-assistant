@@ -8,9 +8,13 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect, type ReactNode } from "react";
+import { AlertTriangle } from "lucide-react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -77,19 +81,27 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Workly AI — Workplace Productivity Assistant" },
+      {
+        name: "description",
+        content:
+          "AI-powered workplace productivity assistant: smart email, meeting notes, task planning, research, and chat.",
+      },
+      { property: "og:title", content: "Workly AI — Workplace Productivity Assistant" },
+      {
+        property: "og:description",
+        content: "Automate workplace tasks with AI: email, meetings, planning, research & chat.",
+      },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
+      { rel: "stylesheet", href: appCss },
+      { rel: "preconnect", href: "https://fonts.googleapis.com" },
+      { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: appCss,
+        href: "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
       },
     ],
   }),
@@ -118,8 +130,31 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
+      <SidebarProvider>
+        <div className="flex min-h-screen w-full bg-gradient-subtle">
+          <AppSidebar />
+          <div className="flex flex-1 flex-col min-w-0">
+            <header className="sticky top-0 z-30 flex h-14 items-center gap-3 border-b bg-background/80 px-4 backdrop-blur-md">
+              <SidebarTrigger />
+              <div className="hidden items-center gap-2 rounded-full border bg-warning/10 px-3 py-1 text-xs font-medium text-warning-foreground sm:flex">
+                <AlertTriangle className="h-3.5 w-3.5 text-warning" />
+                <span className="text-foreground/80">
+                  AI-generated content — review before use.
+                </span>
+              </div>
+              <div className="ml-auto text-xs text-muted-foreground">
+                Powered by Lovable AI
+              </div>
+            </header>
+            <main className="flex-1 px-4 py-6 sm:px-6 lg:px-8">
+              <div className="mx-auto w-full max-w-6xl">
+                <Outlet />
+              </div>
+            </main>
+          </div>
+        </div>
+        <Toaster />
+      </SidebarProvider>
     </QueryClientProvider>
   );
 }
